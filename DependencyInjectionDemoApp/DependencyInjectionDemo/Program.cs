@@ -1,23 +1,29 @@
-using DependencyInjectionDemo.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using DependencyInjectionDemo;
+using DependencyInjectionDemo.Logic;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+//builder.Services.AddTransient<DemoLogic>(); // changes if I change page and then come back
+//builder.Services.AddScoped<DemoLogic>(); // remains equal if I change page and then come back
+//builder.Services.AddSingleton<DemoLogic>(); // remains equal even if i refresh
+
+//builder.Services.AddScoped<IDemoLogic, DemoLogic>();
+//builder.Services.AddTransient<IDemoLogic, BetterDemoLogic>();
+builder.Services.AddTransient<IDemoLogic, DemoLogic>();
+
+builder.Host.UseSerilog((context, config) =>
+{
+    config.WriteTo.Console();
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+app.ConfigureHTTPRequestPipeline();
 
 app.UseHttpsRedirection();
 

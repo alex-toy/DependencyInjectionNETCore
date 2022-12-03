@@ -1,9 +1,24 @@
 ﻿@page "/"
+@using DependencyInjectionDemo.Logic
+@*@inject DemoLogic logic*@
+@inject IDemoLogic logic
+@inject ILogger<Index> logger
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+<h3>value1 : @logic.Value1</h3>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<h3>value2 : @logic.Value2</h3>
+
+
+@code {
+    //private DemoLogic logic;
+
+    protected override void OnInitialized()
+    {
+        //logic = new();
+        logger.LogInformation($"displaying values of {logic.Value1} and {logic.Value2}");
+    }
+}
